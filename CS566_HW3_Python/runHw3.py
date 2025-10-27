@@ -176,15 +176,11 @@ def challenge1b():
     cv2.imwrite("before_ransac.png", before_img)
 
     # Use RANSAC to reject outliers
-    ransac_n = 0  # placeholder
-    ransac_eps = 0.0  # placeholder
-    H_3x3 = np.eye(3)  # placeholder
+    ransac_n = 100  # Max number of iterations (recommended)
+    ransac_eps = 3.0  # Acceptable alignment error in pixels (recommended)
 
-    # ransac_n = ??  # TODO - Max number of iterations
-    # ransac_eps = ?  # TODO - Acceptable alignment error
-
-    (inliers_id, H_3x3) = run_ransac(xs, xd, ransac_n,
-                                     ransac_eps)  # TODO - Modify runRANSAC.py code
+    # Run RANSAC to find inliers and compute robust homography
+    (inliers_id, H_3x3) = run_ransac(xs, xd, ransac_n, ransac_eps)
 
     if len(inliers_id) > 0:
         after_img = show_correspondence(
