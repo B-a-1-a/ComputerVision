@@ -74,6 +74,32 @@ def stitch_img(*args):
         # Use RANSAC to avoid problems caused by outliers.
         #
         # Run RANSAC to find homography
+        ransac_n = 100  # Max number of iterations
+        ransac_eps = 3.0  # Acceptable alignment error in pixels
+        
+        # Run RANSAC to find inliers and compute robust homography
+        # kp_n are source points, kp_stitched are destination points
+        inliers_id, H_n_to_stitched = run_ransac(kp_n, kp_stitched, ransac_n, ransac_eps)
+        
+        if len(inliers_id) < 4:
+            print(f"Warning: Not enough inliers found for image {n}. Skipping.")
+            continue
+        
+        # Warp img_n into the stitched coordinate system
+        # We need the inverse homography for backward warping
+        H_stitched_to_n = np.linalg.inv(H_n_to_stitched)
+        mask_n, warped_img_n = backward_warp_img(
+            img_n, H_stitched_to_n, (W_stitched, H_stitched))
+        
+        # Ensure warped image has the same dtype as stitched_img
+        warped_img_n = warped_img_n.astype(stitched_img.dtype)
+        
+        # Blend the warped image with the current stitched image
+        stitched_img = blend_image_pair(
+            stitched_img, stitch_mask, warped_img_n, mask_n, mode="blend")
+        
+        # Update the stitch mask to include the new region
+        stitch_mask = np.logical_or(stitch_mask, mask_n)
 
         # ---------------------------------------
         # END ADD YOUR CODE HERE

@@ -70,7 +70,7 @@ def run_hw3(*args):
 # --------------------------------------------------------------------------
 def honesty():
     # Replace with your name and uni
-    sign_academic_honesty_policy("full_name", "stu_id")
+    sign_academic_honesty_policy("Bala Shukkla", "shukla35")
 
 
 # --------------------------------------------------------------------------
@@ -223,7 +223,20 @@ def challenge1d():
 
 def challenge1e():
     # User can adapt with their own images
-    print("Implement your own panorama with stitch_img()")
+        # Test image stitching
+    imgc = cv2.imread("kitchenMid.png").astype(np.float32) / 255.0
+    imgl = cv2.imread("kitchenLeft.png").astype(np.float32) / 255.0
+    imgr = cv2.imread("kitchenRight.png").astype(np.float32) / 255.0
+
+    # # Downscale for faster processing (optional - remove for full resolution)
+    # scale = 0.50  # Use 25% of original size for speed
+    # imgc = cv2.resize(imgc, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
+    # imgl = cv2.resize(imgl, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
+    # imgr = cv2.resize(imgr, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
+
+    # TODO: Modify stitchImg.py code
+    stitched_img = stitch_img(imgl, imgc, imgr)
+    cv2.imwrite("kitchen_panorama.png", (stitched_img * 255).astype(np.uint8))
 
 
 # -----------------------------------------------------------------------------

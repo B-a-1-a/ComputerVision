@@ -38,7 +38,24 @@ def blend_image_pair(wrapped_imgs, masks, wrapped_imgd, maskd, mode):
             # you need to compute the weighted masks (for src and dest) using
             # bwdist, and use them to form the output image.
             #
-            pass
+            # Compute distance transform for each mask
+            # bwdist computes the Euclidean distance from each pixel to the nearest zero pixel
+            weight_s = bwdist(binary_mask_s)
+            weight_d = bwdist(binary_mask_d)
+            
+            # Normalize weights so they sum to 1 in overlapping regions
+            # In non-overlapping regions, the weight will be 1 for the present image
+            weight_sum = weight_s + weight_d
+            
+            # Avoid division by zero
+            weight_sum[weight_sum == 0] = 1
+            
+            # Normalize weights
+            weight_s_norm = weight_s / weight_sum
+            weight_d_norm = weight_d / weight_sum
+            
+            # Blend using weighted combination
+            channel_out = weight_s_norm * S + weight_d_norm * D
         out_img[:, :, c] = channel_out
 
     # convert out_img to right type
